@@ -34,19 +34,20 @@ def make_dataset(dir):
     return images
 
 def store_dataset(dir):
-    images = []
-    all_path = []
+    imgs = []
+    paths = []
     assert os.path.isdir(dir), '%s is not a valid directory' % dir
 
-    for root, _, fnames in sorted(os.walk(dir)):
-        for fname in fnames:
-            if is_image_file(fname):
-                path = os.path.join(root, fname)
-                img = Image.open(path).convert('RGB')
-                images.append(img)
-                all_path.append(path)
-
-    return images, all_path
+    for file in os.listdir(dir):
+        path = os.path.join(dir, file)
+        try:
+            img = Image.open(path).convert('RGB')
+            imgs.append(img)
+            paths.append(path)
+        except (OSError, ValueError) as e:
+            print(f"Warning: Unable to open image {path}. Error: {e}")
+            continue  
+    return imgs, paths
 
 
 def default_loader(path):
